@@ -466,12 +466,6 @@ in "|ssh_keys|_" to setup your public and private key pair on Odin and GitHub.
       fully committed. If you're not, then take the necessary steps to
       make sure that you are.
 
-   2. Try to pull changes from GitHub (this may require you to manually
-      merge in the case of a conflict; that's okay -- merge, commit, then
-      continue)::
-
-        $ git pull origin main
-
    3. Push changes to GitHub::
 
         $ git push origin main
