@@ -25,7 +25,7 @@ public class EarthQuakeApp extends Application {
     private HBox root;
     private ImageView imageView;
     private VBox options;
-
+    private OptionsPane optionsPane;
 
     public EarthQuakeApp() {
         this.stage = null;
@@ -34,10 +34,7 @@ public class EarthQuakeApp extends Application {
         this.imageView = new ImageView(new Image("file:resources/World_outline_map.png"));
         this.imageView.setFitHeight(400);
         this.imageView.setFitWidth(900);
-        this.options = new VBox();
-        this.options.setPrefHeight(400);
-        this.options.setPrefWidth(250);
-        this.options.setBackground(new Background(new BackgroundFill(Color.BEIGE, null, null)));
+        this.optionsPane = new OptionsPane();
     } // EarthQuakeApp
 
     @Override
@@ -48,7 +45,7 @@ public class EarthQuakeApp extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        root.getChildren().addAll(imageView, options);
+        root.getChildren().addAll(imageView, optionsPane);
         this.scene = new Scene(this.root);
         this.stage.setOnCloseRequest(event -> Platform.exit());
         this.stage.setTitle("Earth Quake Finder");
