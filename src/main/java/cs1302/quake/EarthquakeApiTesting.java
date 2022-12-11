@@ -80,7 +80,10 @@ public class EarthquakeApiTesting {
 
         String query = "/" + METHOD + "?" + FORMAT + "&minmagnitude=5&eventtype=earthquake";
 
-        String uri = EARTHQUAKE_API + query;
+        // String uri = EARTHQUAKE_API + query;
+
+        String uri = EARTHQUAKE_API + "/" + METHOD + "?" + FORMAT +
+            "&minmagnitude=5&eventtype=earthquake&starttime=2022-01-01&limit=10";
 
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(uri))
