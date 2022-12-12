@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Background;
-
+import javafx.scene.layout.StackPane;
 
 /**
  * Represents an EarthQuake App.
@@ -26,6 +26,9 @@ public class EarthQuakeApp extends Application {
     private ImageView imageView;
     private VBox options;
     private OptionsPane optionsPane;
+    private StackPane stackPane;
+    private ImageView pointer;
+
 
     public EarthQuakeApp() {
         this.stage = null;
@@ -34,7 +37,8 @@ public class EarthQuakeApp extends Application {
         this.imageView = new ImageView(new Image("file:resources/World_outline_map.png"));
         this.imageView.setFitHeight(400);
         this.imageView.setFitWidth(900);
-        this.optionsPane = new OptionsPane();
+        this.optionsPane = new OptionsPane(this);
+        this.stackPane = new StackPane(imageView);
     } // EarthQuakeApp
 
     @Override
@@ -45,7 +49,7 @@ public class EarthQuakeApp extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        root.getChildren().addAll(imageView, optionsPane);
+        root.getChildren().addAll(stackPane, optionsPane);
         this.scene = new Scene(this.root);
         this.stage.setOnCloseRequest(event -> Platform.exit());
         this.stage.setTitle("Earth Quake Finder");
@@ -57,7 +61,31 @@ public class EarthQuakeApp extends Application {
 
     } // start
 
+    /**
+     * Method displays locations of earthquakes.
+     * @param earthquakes contains locations of earthquakes
+     */
+    public void displayPointers(Earthquake[] earthquakes) {
 
+        System.out.println("Printing pointers...");
+
+        ImageView[] pointers = new ImageView[earthquakes.length];
+
+        for (int i = 0; i < earthquakes.length; i++) {
+
+
+            pointers[i] = new ImageView("file:resources/Location_pointer.png");
+            pointers[i].setFitHeight(100);
+            pointers[i].setFitWidth(100);
+            pointers[i].setTranslateX(earthquakes[i].longitude * 2.5);
+            pointers[i].setTranslateY(earthquakes[i].latitude * 4.44);
+        } // for
+
+        Platform.runLater(() -> stackPane.getChildren().addAll(pointers));
+
+
+
+    } // displayPointers
 
 
 
