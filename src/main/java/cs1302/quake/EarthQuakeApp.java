@@ -14,6 +14,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.StackPane;
+import javafx.scene.image.Image;
 
 /**
  * Represents an EarthQuake App.
@@ -28,17 +29,19 @@ public class EarthQuakeApp extends Application {
     private OptionsPane optionsPane;
     private StackPane stackPane;
     private ImageView pointer;
-
+    private Image map;
 
     public EarthQuakeApp() {
         this.stage = null;
         this.scene = null;
         this.root = new HBox();
-        this.imageView = new ImageView(new Image("file:resources/World_outline_map.png"));
+        this.map = new Image("file:resources/World_location_map_(equirectangular_180).svg-2.png");
+        this.imageView = new ImageView(map);
         this.imageView.setFitHeight(400);
         this.imageView.setFitWidth(900);
         this.optionsPane = new OptionsPane(this);
         this.stackPane = new StackPane(imageView);
+        System.out.println(imageView.getFitWidth() + " " + imageView.getFitHeight());
     } // EarthQuakeApp
 
     @Override
@@ -75,14 +78,16 @@ public class EarthQuakeApp extends Application {
 
 
             pointers[i] = new ImageView("file:resources/Location_pointer.png");
-            pointers[i].setFitHeight(100);
-            pointers[i].setFitWidth(100);
+
+            pointers[i].setFitHeight(earthquakes[i].mag*18);
+            pointers[i].setFitWidth(earthquakes[i].mag*18);
             pointers[i].setTranslateX(earthquakes[i].longitude * 2.5);
-            pointers[i].setTranslateY(earthquakes[i].latitude * 4.44);
+            pointers[i].setTranslateY(earthquakes[i].latitude * -2.2);
         } // for
 
+        Platform.runLater(() -> stackPane.getChildren().clear());
+        Platform.runLater(() -> stackPane.getChildren().add(imageView));
         Platform.runLater(() -> stackPane.getChildren().addAll(pointers));
-
 
 
     } // displayPointers

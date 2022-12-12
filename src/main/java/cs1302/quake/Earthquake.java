@@ -58,4 +58,18 @@ public class Earthquake {
     public String getType() {
         return type;
     } // getType
+
+    /**
+     * Get latitude.
+     */
+    public double getLatitude() {
+        return latitude;
+    } //getLatitude
+
+    /**
+     * Get longitude.
+     */
+    public double getLongitude() {
+        return longitude;
+    } // getLongitude
 } // Earthquake
