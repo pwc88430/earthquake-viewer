@@ -2,6 +2,7 @@ package cs1302.quake;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+
 /**
  * Represents an Earthquake object.
  */
@@ -15,13 +16,23 @@ public class Earthquake {
     double longitude;
     double latitude;
 
+    /**
+     * Contructor for Earthquake object.
+     * @param mag earthquake magnitude
+     * @param place earthquake location
+     * @param time earthquake time
+     * @param detail earthquake details
+     * @param type earthquake type
+     * @param longitude earthquake longitude
+     * @param latitude earthquake latitude
+     */
     public Earthquake(double mag, String place, long time, String detail, String type,
-    double longitude, double latitude) {
+        double longitude, double latitude) {
 
-         ZonedDateTime dateTime = Instant.ofEpochMilli(time)
+        ZonedDateTime dateTime = Instant.ofEpochMilli(time)
             .atZone(ZoneId.of("Australia/Sydney"));
 
-         String formatted = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String formatted = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
         this.mag = mag;
         this.place = place;
@@ -34,6 +45,7 @@ public class Earthquake {
 
     /**
      * Get mag.
+     * @return magnitude
      */
     public double getMag() {
         return mag;
@@ -41,6 +53,7 @@ public class Earthquake {
 
     /**
      * Get place.
+     * @return place
      */
     public String getPlace() {
         return place;
@@ -48,6 +61,7 @@ public class Earthquake {
 
     /**
      * Get time.
+     * @return time
      */
     public String  getTime() {
         return time;
@@ -55,6 +69,7 @@ public class Earthquake {
 
     /**
      * Get detail.
+     * @return details
      */
     public String getDetail() {
         return detail;
@@ -62,6 +77,7 @@ public class Earthquake {
 
     /**
      * Get type.
+     * @return type
      */
     public String getType() {
         return type;
@@ -69,6 +85,7 @@ public class Earthquake {
 
     /**
      * Get latitude.
+     * @return latitude
      */
     public double getLatitude() {
         return latitude;
@@ -76,6 +93,7 @@ public class Earthquake {
 
     /**
      * Get longitude.
+     * @return longitude
      */
     public double getLongitude() {
         return longitude;

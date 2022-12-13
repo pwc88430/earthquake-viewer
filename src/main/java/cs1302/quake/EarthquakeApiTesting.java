@@ -20,8 +20,6 @@ import java.lang.Integer;
  *
  */
 public class EarthquakeApiTesting {
-
-    /** HTTP client **/
     public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
         .version(HttpClient.Version.HTTP_2)
         .followRedirects(HttpClient.Redirect.NORMAL)
@@ -64,7 +62,7 @@ public class EarthquakeApiTesting {
             // System.out.println(geojson);
             // System.out.println(request.uri().toString());
 
-        } catch(Exception e) {
+        } catch (Exception e) {
 
             System.out.println(e);
 
@@ -75,6 +73,7 @@ public class EarthquakeApiTesting {
 
     /**
      * BuildRequest builds an HTTP request object.
+     * @return an HttpRequest object
      */
     public static HttpRequest buildRequest() {
 

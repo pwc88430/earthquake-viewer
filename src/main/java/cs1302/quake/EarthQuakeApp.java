@@ -31,6 +31,9 @@ public class EarthQuakeApp extends Application {
     private ImageView pointer;
     private Image map;
 
+    /**
+     * A constructor for an EarthQuakeApp object.
+     */
     public EarthQuakeApp() {
         this.stage = null;
         this.scene = null;
@@ -79,8 +82,8 @@ public class EarthQuakeApp extends Application {
 
             pointers[i] = new ImageView("file:resources/Location_pointer.png");
 
-            pointers[i].setFitHeight(earthquakes[i].mag*18);
-            pointers[i].setFitWidth(earthquakes[i].mag*18);
+            pointers[i].setFitHeight(earthquakes[i].mag * 18);
+            pointers[i].setFitWidth(earthquakes[i].mag * 18);
             pointers[i].setTranslateX(earthquakes[i].longitude * 2.5);
             pointers[i].setTranslateY(earthquakes[i].latitude * -2.2);
         } // for
