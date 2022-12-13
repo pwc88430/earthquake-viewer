@@ -255,52 +255,38 @@ public class OptionsPane extends GridPane {
         Label longitude = new Label("Longitude: " + earthquake.longitude);
         Label latitude = new Label("Latitude: " + earthquake.latitude);
         Button back = new Button("Back to map");
-        ImageView zoom = new ImageView();
-        Label info = new Label();
-        info.setWrapText(true);
-        TextField url = new TextField();
+        ImageView zoom = new ImageView(zoomedImage);
         ImageView pointer = new ImageView("file:resources/Location_pointer.png");
         pointer.setFitHeight(100);
         pointer.setFitWidth(100);
         double x = 475 + earthquake.longitude * 3.55;
         double y = 210 + earthquake.latitude * -3.55;
         zoom.setViewport(new Rectangle2D(x,y, 330, 220));
-        zoom.setImage(zoomedImage);
-        Label title = new Label();
-        title.setWrapText(true);
-        StackPane pane = new StackPane();
-        pane.setPrefWidth(330);
-        pane.setPrefHeight(220);
-        pane.getChildren().add(zoom);
-        pane.getChildren().add(pointer);
-        ImageView extraImage = new ImageView();
+        StackPane pane = new StackPane(zoom, pointer);
+        pane.setPrefSize(330, 220);
         Label credit = new Label("Details provided by www.earthquakenewstoday.com");
         credit.setFont(new Font(10));
         try {
             HttpRequest request = newRequest(earthquake);
-            HttpResponse<String> response = HTTP_CLIENT
-                .send(request, BodyHandlers.ofString());
+            HttpResponse<String> response = HTTP_CLIENT.send(request, BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 throw new IllegalStateException();
             }
-            String jsonString = response.body();
-            InfoAPIResponse apiResponse = GSON
-                .fromJson(jsonString, InfoAPIResponse.class);
-            title.setText("Event: " + apiResponse.value[0].title);
-            info.setText(apiResponse.value[0].description);
-            extraImage.setImage(new Image(apiResponse.value[0].image.url));
+            InfoAPIResponse apiResponse = GSON.fromJson(response.body(), InfoAPIResponse.class);
+            Label title = new Label("Event: " + apiResponse.value[0].title);
+            title.setWrapText(true);
+            Label info = new Label(apiResponse.value[0].description);
+            info.setWrapText(true);
+            ImageView extraImage = new ImageView(new Image(apiResponse.value[0].image.url));
             extraImage.setFitHeight(150);
             extraImage.setFitWidth(150);
-            url.setText(apiResponse.value[0].url);
+            TextField url = new TextField(apiResponse.value[0].url);
             url.setEditable(false);
-            final Stage dialog = new Stage();
-            dialog.setTitle("Info");
-            dialog.initModality(Modality.APPLICATION_MODAL);
+            Stage dialog = new Stage();
             GridPane grid = new GridPane();
             Scene dialogScene = new Scene(grid, 350, 720);
-            dialog.setScene(dialogScene);
-            dialog.show();
             Runnable closeInfo = () -> dialog.close();
+            formatStage(dialog, dialogScene);
             back.setOnAction(event -> closeInfo.run());
             grid.setPadding(new Insets(10, 10, 10, 10));
             grid.setAlignment(Pos.TOP_LEFT);
@@ -333,21 +319,15 @@ public class OptionsPane extends GridPane {
     private static HttpRequest newRequest(Earthquake earthquake) {
         String location = earthquake.place.replaceAll(" ", "%20").replaceAll(",", "");
         String time = String.valueOf(earthquake.time);
-
-
         String uri = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/" +
             "WebSearchAPI?q=earthquakenewstoday%20earthquake%20" + location + "%20" + time +
             "&pageNumber=1&pageSize=1&autoCorrect=true&safeSearch=true";
-
-        System.out.println(uri);
-
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(uri))
             .header("X-RapidAPI-Key", "c88637b20emshc118db30b941d9fp1345bajsnd02a670fa0e4")
             .header("X-RapidAPI-Host", "contextualwebsearch-websearch-v1.p.rapidapi.com")
             .method("GET", HttpRequest.BodyPublishers.noBody())
             .build();
-
         return request;
     } // newRequest
 
@@ -420,6 +400,19 @@ public class OptionsPane extends GridPane {
         this.add(credit, 0, 17, 3, 1);
 
     } // addElements
+
+    /**
+     * Method to format a Stage oibject mainly used to reduce the size of
+     * of other methods.
+     * @param dialog is the stage to be formated
+     * @param dialogScene is a Scene object
+     */
+    public static void formatStage(Stage dialog, Scene dialogScene) {
+        dialog.setTitle("Info");
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.setScene(dialogScene);
+        dialog.show();
+    } // formatStage
 
 
 } // OptionsPane
