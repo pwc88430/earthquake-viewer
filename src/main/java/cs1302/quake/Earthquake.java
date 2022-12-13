@@ -1,5 +1,7 @@
 package cs1302.quake;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 /**
  * Represents an Earthquake object.
  */
@@ -7,7 +9,7 @@ public class Earthquake {
 
     double mag;
     String place;
-    long time;
+    String time;
     String detail;
     String type;
     double longitude;
@@ -15,9 +17,15 @@ public class Earthquake {
 
     public Earthquake(double mag, String place, long time, String detail, String type,
     double longitude, double latitude) {
+
+         ZonedDateTime dateTime = Instant.ofEpochMilli(time)
+            .atZone(ZoneId.of("Australia/Sydney"));
+
+         String formatted = dateTime.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
         this.mag = mag;
         this.place = place;
-        this.time = time;
+        this.time = formatted;
         this.detail = detail;
         this.type = type;
         this.longitude = longitude;
@@ -41,7 +49,7 @@ public class Earthquake {
     /**
      * Get time.
      */
-    public long  getTime() {
+    public String  getTime() {
         return time;
     } // getTime
 

@@ -16,8 +16,10 @@ import javafx.stage.Modality;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-
+import javafx.scene.control.TextField;
 import java.lang.Thread;
+import javafx.scene.layout.StackPane;
+import java.time.ZonedDateTime;
 
 import javafx.geometry.Rectangle2D;
 import java.net.URI;
@@ -34,6 +36,7 @@ import com.google.gson.GsonBuilder;
 
 import java.lang.Integer;
 import javafx.collections.FXCollections;
+import javafx.scene.text.Font;
 
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.TableColumn;
@@ -63,6 +66,7 @@ public class OptionsPane extends GridPane {
     Label resultSource;
     ComboBox<String> regionSelection;
     Label regionFilter;
+    Label credit;
 
     int resultLimit;
     double minimumMagnitude;
@@ -119,6 +123,8 @@ public class OptionsPane extends GridPane {
             )
         );
 
+        credit = new Label("Earthquake data provided by https://earthquake.usgs.gov/");
+        credit.setFont(new Font(10));
         regionFilter = new Label("Filter by region:");
         regionSelection = new ComboBox<>(FXCollections.observableArrayList(regions));
         regionSelection.setValue("All regions");
@@ -141,7 +147,7 @@ public class OptionsPane extends GridPane {
         TableColumn<Earthquake,String> placeCol = new TableColumn<>("Location");
         placeCol.setCellValueFactory(new PropertyValueFactory<>("place"));
         placeCol.setMinWidth(300);
-        TableColumn<Earthquake,Long> timeCol = new TableColumn<>("Time");
+        TableColumn<Earthquake,String> timeCol = new TableColumn<>("Time");
         timeCol.setCellValueFactory(new PropertyValueFactory<>("time"));
         timeCol.setMinWidth(115);
         TableColumn<Earthquake,String> detailCol = new TableColumn<>("More Info");
@@ -170,9 +176,6 @@ public class OptionsPane extends GridPane {
 
         results = new Label("Results:");
         resultSource = new Label("All Earthquake data provided by https://earthquake.usgs.gov");
-
-        moreInfo = () -> getMoreInfo(new Earthquake(3.1, "b", 3422, "hgsdfu", "hsgd", 234.2, 143));
-
 
         runable = () -> loadResults(Integer.parseInt(comboBox.getValue()),
         Double.parseDouble(selectedMagnitude.getText()), date, regionSelection.getValue(),
@@ -207,6 +210,8 @@ public class OptionsPane extends GridPane {
         this.add(results, 0, 8);
         this.add(table, 0, 9, 3, 7);
 
+        this.add(credit, 0, 17, 3, 1);
+
         //this.add(resultSource, 0, 15);
     } // constructor
 
@@ -220,7 +225,7 @@ public class OptionsPane extends GridPane {
         try {
 
             HttpRequest request = buildRequest(resultLimit, minMagnitude, date, region, starttime);
-        HttpResponse<String> response = HTTP_CLIENT
+            HttpResponse<String> response = HTTP_CLIENT
             .send(request, BodyHandlers.ofString());
 
         String geojson = response.body();
@@ -318,7 +323,6 @@ public class OptionsPane extends GridPane {
 
 
         return request;
-
     } // buildRequest
 
     /**
@@ -328,7 +332,7 @@ public class OptionsPane extends GridPane {
 
         System.out.println("Getting more info...");
 
-        Label title = new Label("Type: Earthquake");
+
 
         Label location = new Label("Location: " + earthquake.place);
 
@@ -344,23 +348,70 @@ public class OptionsPane extends GridPane {
 
         ImageView zoom = new ImageView();
 
-        Label moreInfo = new Label("More info: ");
+        Label moreInfo = new Label("More info:");
 
-        Label info = new Label("Lots of interesting information...");
+        Label info = new Label();
+        info.setWrapText(true);
 
-        zoom.setViewport(new Rectangle2D(470 + earthquake.longitude * 2.5, 210 + earthquake.latitude * -2.2, 330, 220));
+        TextField url = new TextField();
 
-        //zoom.setFitWidth(330);
-        //zoom.setFitHeight(175);
+        ImageView pointer = new ImageView("file:resources/Location_pointer.png");
+        pointer.setFitHeight(100);
+        pointer.setFitWidth(100);
+
+        double x = 475 + earthquake.longitude * 3.55;
+        double y = 210 + earthquake.latitude * -3.55;
+
+        zoom.setViewport(new Rectangle2D(x,y, 330, 220));
         zoom.setImage(zoomedImage);
 
+        Label title = new Label();
+        title.setWrapText(true);
+
+        StackPane pane = new StackPane();
+        pane.setPrefWidth(330);
+        pane.setPrefHeight(220);
+        pane.getChildren().add(zoom);
+        pane.getChildren().add(pointer);
+
+        ImageView extraImage = new ImageView();
+
+        Label credit = new Label("Details provided by www.earthquakenewstoday.com");
+        credit.setFont(new Font(10));
+
+        try {
+
+            HttpRequest request = newRequest(earthquake);
+
+            HttpResponse<String> response = HTTP_CLIENT
+                .send(request, BodyHandlers.ofString());
+
+            String jsonString = response.body();
+
+            InfoAPIResponse apiResponse = GSON
+                .fromJson(jsonString, InfoAPIResponse.class);
+
+            title.setText("Event: " + apiResponse.value[0].title);
+
+            info.setText(apiResponse.value[0].description);
+
+            extraImage.setImage(new Image(apiResponse.value[0].image.url));
+            extraImage.setFitHeight(150);
+            extraImage.setFitWidth(150);
+
+            url.setText(apiResponse.value[0].url);
+            url.setEditable(false);
+
+        } catch (Exception e) {
+            System.out.println("Could not load more information...");
+        }
 
         final Stage dialog = new Stage();
         dialog.setTitle("Info");
         dialog.initModality(Modality.APPLICATION_MODAL);
         //dialog.initOwner(primaryStage);
         GridPane grid = new GridPane();
-        Scene dialogScene = new Scene(grid, 350, 600);
+        Scene dialogScene = new Scene(grid, 350, 720);
         dialog.setScene(dialogScene);
         dialog.show();
 
@@ -372,19 +423,40 @@ public class OptionsPane extends GridPane {
         grid.setAlignment(Pos.TOP_LEFT);
         grid.setVgap(5);
         grid.setHgap(5);
-        grid.add(zoom, 0, 0);
+        grid.add(pane, 0, 0);
         grid.add(title, 0, 1);
-        grid.add(location, 0, 2);
-        grid.add(mag, 0, 3);
-        grid.add(time, 0, 4);
-        grid.add(longitude, 0, 5);
-        grid.add(latitude, 0, 6);
-        grid.add(moreInfo, 0, 7);
-        grid.add(info, 0, 8);
 
-        grid.add(back, 0, 11);
+        grid.add(time, 0, 2);
+        grid.add(longitude, 0, 3);
+        grid.add(latitude, 0, 4);
+        grid.add(moreInfo, 0, 5);
+        grid.add(info, 0, 6);
+        grid.add(url, 0, 7);
+        grid.add(extraImage, 0, 8);
+
+        grid.add(back, 0, 9);
+
+        grid.add(credit, 0, 10);
 
     } // getMoreInfo
+
+    private static HttpRequest newRequest(Earthquake earthquake) {
+        String location = earthquake.place.replaceAll(" ", "%20").replaceAll(",", "");
+        String time = String.valueOf(earthquake.time);
+
+        System.out.println(location);
+
+        String uri = "https://contextualwebsearch-websearch-v1.p.rapidapi.com/api/Search/WebSearchAPI?q=earthquakenewstoday%20earthquake%20" +location+ "%2022-12&pageNumber=1&pageSize=1&autoCorrect=true&safeSearch=true";
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(uri))
+            .header("X-RapidAPI-Key", "c88637b20emshc118db30b941d9fp1345bajsnd02a670fa0e4")
+            .header("X-RapidAPI-Host", "contextualwebsearch-websearch-v1.p.rapidapi.com")
+            .method("GET", HttpRequest.BodyPublishers.noBody())
+            .build();
+
+        return request;
+    } // newRequest
 
 
 } // OptionsPane
