@@ -7,24 +7,30 @@ Markdown is transformed into nice looking HTML.
 
 ## Part 1: App Description
 
-> Please provide a firendly description of your app, including the app
-> category that you chose, and the primary functions available to users
-> of the app.
+> Earthquake Finder is a sinmple app to search for earthquakes around the world.
+> On the right hand side, enter your search perameters and then click "Locate Earthquakes"!
+> This will populate the list in the bottom right and display earthquake locations
+> along with their relative magnitudes on the world map.  For more detailed information about
+> each earthquake, simply click on a row of the table.
+> The FQN of the main class is cs1302.quake.EarthQuakeDriver
 
-> **Also, include the GitHub `https` URL to your repository.**
+> https://github.com/pwc88430/cs1302-omega
 
 TODO WRITE / REPLACE
 
 ## Part 2: New
 
-> What is something new and/or exciting that you learned from working
-> on this project?
+> I really enjoyed learning about more of the class in javafx and how to use them including GridPane,
+> StackPane, and TableView.
 
 TODO WRITE / REPLACE
 
 ## Part 3: Retrospect
 
-> If you could start the project over from scratch, what do
-> you think might do differently and why?
+> The most important thing that I have learned from this project is the importance to plan out
+> most aspects before begining.  For example, I had not fully thought out how I was going to implement
+> the second API into my project before starting.  Once I finished implementing the first one, locating an
+> api that I could use to get the information that I wanted was very time consuming.  I should have identified
+> and completely tested both API's before trying to implement either of them.
 
 TODO WRITE / REPLACE
